@@ -238,11 +238,11 @@
 
                 if (isEnabled('h')) {
                     topRow.append($('<td>')
-                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.incrementHour }).addClass('btn').attr('data-action', 'incrementHours').append($('<span>').addClass(options.icons.up))));
+                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.incrementHour, 'data-arrow-component': 'inc-hours' }).addClass('btn').attr('data-action', 'incrementHours').append($('<span>').addClass(options.icons.up))));
                     middleRow.append($('<td>')
                         .append($('<span>').addClass('timepicker-hour').attr({ 'data-time-component': 'hours', 'title': options.tooltips.pickHour }).attr('data-action', 'showHours')));
                     bottomRow.append($('<td>')
-                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.decrementHour }).addClass('btn').attr('data-action', 'decrementHours').append($('<span>').addClass(options.icons.down))));
+                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.decrementHour, 'data-arrow-component': 'dec-hours' }).addClass('btn').attr('data-action', 'decrementHours').append($('<span>').addClass(options.icons.down))));
                 }
                 if (isEnabled('m')) {
                     if (isEnabled('h')) {
@@ -251,12 +251,12 @@
                         bottomRow.append($('<td>').addClass('separator'));
                     }
                     topRow.append($('<td>')
-                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.incrementMinute }).addClass('btn').attr('data-action', 'incrementMinutes')
+                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.incrementMinute, 'data-arrow-component': 'inc-min' }).addClass('btn').attr('data-action', 'incrementMinutes')
                             .append($('<span>').addClass(options.icons.up))));
                     middleRow.append($('<td>')
                         .append($('<span>').addClass('timepicker-minute').attr({ 'data-time-component': 'minutes', 'title': options.tooltips.pickMinute }).attr('data-action', 'showMinutes')));
                     bottomRow.append($('<td>')
-                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.decrementMinute }).addClass('btn').attr('data-action', 'decrementMinutes')
+                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.decrementMinute, 'data-arrow-component': 'dec-min' }).addClass('btn').attr('data-action', 'decrementMinutes')
                             .append($('<span>').addClass(options.icons.down))));
                 }
                 if (isEnabled('s')) {
@@ -762,8 +762,22 @@
             fillHours = function () {
                 var table = widget.find('.timepicker-hours table'),
                     currentHour = viewDate.clone().startOf('d'),
+                    incrementArrow = widget.find('.timepicker [data-arrow-component=inc-hours]'),
+                    decrementArrow = widget.find('.timepicker [data-arrow-component=dec-hours]'),
                     html = [],
                     row = $('<tr>');
+
+                if (isValid(date.clone().subtract(1, 'h'), 'h')) {
+                    decrementArrow.removeClass('disable-icon');
+                } else {
+                    decrementArrow.addClass('disable-icon');
+                }
+
+                if (isValid(date.clone().add(1, 'h'), 'h')) {
+                    incrementArrow.removeClass('disable-icon');
+                } else {
+                    incrementArrow.addClass('disable-icon');
+                }
 
                 if (viewDate.hour() > 11 && !use24Hours) {
                     currentHour.hour(12);
@@ -781,10 +795,24 @@
 
             fillMinutes = function () {
                 var table = widget.find('.timepicker-minutes table'),
+                    incrementArrow = widget.find('.timepicker [data-arrow-component=inc-min]'),
+                    decrementArrow = widget.find('.timepicker [data-arrow-component=dec-min]'),
                     currentMinute = viewDate.clone().startOf('h'),
                     html = [],
                     row = $('<tr>'),
                     step = options.stepping === 1 ? 5 : options.stepping;
+
+                if (isValid(date.clone().subtract(options.stepping, 'm'), 'm')) {
+                    decrementArrow.removeClass('disable-icon');
+                } else {
+                    decrementArrow.addClass('disable-icon');
+                }
+
+                if (isValid(date.clone().add(options.stepping, 'm'), 'm')) {
+                    incrementArrow.removeClass('disable-icon');
+                } else {
+                    incrementArrow.addClass('disable-icon');
+                }
 
                 while (viewDate.isSame(currentMinute, 'h')) {
                     if (currentMinute.minute() % (step * 4) === 0) {
